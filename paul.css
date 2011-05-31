@@ -1,0 +1,98 @@
+body {
+	background-color: #000;
+}
+#header {
+	height: 100px;
+	border: solid;
+	background-color: #aab0bf;
+	margin: -15px -7px; 0px -7px;
+	-moz-box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.30);
+	-webkit-box-shadow: 3px 3px -0px rgba(0, 0, 0, 0.30);
+
+}
+#resource_container {
+	width: 800px;
+	height: 80px;
+	border: solid;
+	margin: 5px auto 5px auto;
+}
+#resources {
+	width: 800px;
+	margin 0px 0px 0px 0px;
+	height: 80px;
+	border-collapse: collapse;
+}
+
+#resources th, #resources td {
+	width: 250px;
+	text-align: center;
+}
+#sky {
+	background-color: #9dd4ff;
+	position: fixed;
+	left: 0px;
+	top: 100px;
+	height: 9000px;
+}
+#stage {
+	position: fixed;
+	left: 0px;
+	background-color: #109a10;
+	border-top: solid;
+	height: 400px;
+	text-align: center;
+}
+#battlefield {
+	width: 700px;
+	margin: 0px auto 0px auto;
+	border-collapse: collapse;
+}
+#battlefield tr td {
+	width: 100px;
+	height: 50px;
+	border: solid;
+}
+#footer {
+	position: fixed;
+	left: 0px;
+	top: 600px;
+	min-width: 800px;
+	height: 300px;
+	background-color rgba(0, 0, 0, 0);
+	margin: 0px -15px -15px -15px;
+}
+#left_pane, #right_pane {
+	height: 300px;
+	width: 300px;
+	background-color: #a4551d;
+	border: solid;
+	z-index: 10;
+	-webkit-border-radius: 150px; -moz-border-radius: 150px;
+}
+#left_pane {
+	float: left;
+	margin-left: -100px;
+}
+#right_pane {
+	float: right;
+	margin-right: -100px;
+}
+#middle_bar {
+	position: absolute;
+	border-top: solid;
+	z-index: 100;
+	top: 100px;
+	min-width: 3000px;
+	max-width: 9000px;
+	height: 200px;
+	margin: 0px -15px -15px -15px;
+	background-color: #a4551d;
+}
+#unpause {
+	position: fixed;
+	left: 100px;
+	top: 100px;
+	width: 200px;
+	height: 200px;
+	display: none;
+}
