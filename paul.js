@@ -13,6 +13,7 @@ function initializeControls() {
 	$('.node').click(constructNode);
 	$('.turret').hide();
 	$('.construct_button').click(selectType);
+	$('#send_wave').click(generateWave);
 }
 function helpWindow() {
 	onReturn = function() {
@@ -28,7 +29,7 @@ function initializeGame() {
 	setResource('dereks', 100);
 	setResource('sacs', 100);
 	setResource('bravos', 100);
-	$(document).everyTime(100, 'update', gameUpdate, 0);
+	$(document).everyTime(50, 'update', gameUpdate, 0);
 	$(document).attr('paused', false);
 	$(document).attr('selected', null);
 
@@ -36,7 +37,7 @@ function initializeGame() {
 	//name, damage, dereks, sacs, bravos
 	nodeData['basic_paul'] = ['Basic Paul', 10, 30, 30, 30];
 	nodeData['sad_paul'] = ['Sad Paul', 15, 0, 70, 70];
-	nodeData['undercover_paul'] = ['Undercover Paul', 19, 90, 30, 30];
+	nodeData['covert_paul'] = ['Undercover Paul', 19, 90, 30, 30];
 	$(document).attr('node_data', nodeData);
 	$(document).attr('enemies', []);
 	$(document).attr('level', 1);
@@ -46,7 +47,7 @@ function initializeGame() {
 ***********************************************/
 function adjustPanes() {
 	if(!$(document).attr('paused') && (window.innerHeight < 800 || window.innerWidth < 1050))
-		pauseGame('Window too Small. Please Resize', function(){return true;});
+		pauseGame('Window too Small. Please Resize. You might even consider holding CTRL and scrolling the mousewheel down', function(){return true;});
 	if($('#footer').css('top') != (window.innerHeight - 300) + 'px') {
 		$('#footer').css('top', (window.innerHeight - 300) + 'px');
 		$('#sky').css('height', (window.innerHeight - 600) + 'px');
@@ -69,7 +70,7 @@ function adjustPanes() {
 function gameUpdate() {
 	var enemies = $(document).attr('enemies');
 	for(var i = 0; i < enemies.length; i++) {
-		$(enemies[i]).attr('onUpdate')();
+		move(enemies[i]);
 	}
 }
 function pauseGame(reason, onReturn) {
@@ -82,7 +83,7 @@ function pauseGame(reason, onReturn) {
 function returnToGame(onReturn) {
 	$('#unpause').hide();
 	onReturn();
-	$(document).everyTime(100, 'update', gameUpdate, 0);
+	$(document).everyTime(50, 'update', gameUpdate, 0);
 	$(document).attr('paused', false);
 }
 function hasResource(resource, n) {
@@ -150,29 +151,32 @@ function generateWave() {
 }
 function generateEnemy(enemyName) {
 	enemy = document.createElement('div');
-	$(enemy).css('left', "2000px");
-	$(enemy).attr('x', 2000);
+	$(enemy).attr('x', parseInt(Math.random() * 200) + 2000);
+	$(enemy).css('left', $(enemy).attr('x') + 'px');
+	$(enemy).css('top', parseInt(Math.random() * 100) + 'px');
 	$(enemy).attr('xVelocity', -13);
 	$(enemy).addClass(enemyName);
-	//$('#sky').appendChild(enemy);
-	$(enemy).attr('onUpdate', [function () {
-								var x = $(enemy).attr('x');
-								var xVelocity = $(enemy).attr('xVelocity');
-								x -= xVelocity;
-								$(enemy).css('left', x + "px");
-								}]);
+	$(enemy).addClass('enemy');
+	$('#sky').append(enemy);
 	$(document).attr('enemies').push(enemy);
 }
+function move(enemy) {
+	var x = parseInt($(enemy).attr('x'));
+	var xVelocity = parseInt($(enemy).attr('xVelocity'));
+	x += xVelocity;
+	$(enemy).attr('x', x);
+	$(enemy).css('left', x + "px");
+};
 
 /**********************************************
 *********************Crap**********************
 *********************************************/
 var DIFFICULTIES = 
-(//'sac 25\n' +
-//'dyal 19\n' +
+('sac 25\n' +
+'dyal 19\n' +
 'derek 12\n' +
 'mah 7\n' +
-//'bravo 3' +
+'bravo 3' +
 '').split("\n").map(
 	function(x){
 		var temp =  x.split(" ")

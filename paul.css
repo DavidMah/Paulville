@@ -143,6 +143,18 @@ body {
 	margin-right: 5px;
 	text-align: left;
 }
+#right_pane_content button {
+	float: right;
+	margin-left: 5px;
+}
+#send_wave {
+	width: 150px;
+	height: 65px;
+}
+#right_pane_content button {
+	float: left;
+	margin-left: 5px;
+}
 #selected_image {
 	border: solid;
 	-webkit-border-radius: 5px; -moz-border-radius: 5px;
@@ -171,7 +183,7 @@ body {
 	display: visible;
 }
 .undercover_paul {
-	background-image: url('images/undercover_paul.png');
+	background-image: url('images/covert_paul.png');
 	display: visible;
 }
 .sad_paul {
@@ -188,6 +200,22 @@ body {
 }
 .mah {
 	background-image: url('images/mah.png');
+	display: visible;
+}
+.derek {
+	background-image: url('images/derek.png');
+	display: visible;
+}
+.bravo {
+	background-image: url('images/bravo.png');
+	display: visible;
+}
+.isaac {
+	background-image: url('images/isaac.png');
+	display: visible;
+}
+.will {
+	background-image: url('images/will.png');
 	display: visible;
 }
 /******************************************
