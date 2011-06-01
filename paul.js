@@ -55,6 +55,8 @@ function initializeGame() {
 	$(document).attr('lifelist', ['dummy']);
 	$(document).attr('turrets', []);
 	initializeBullets();
+
+	helpWindow();
 }
 function initializeBullets() {
 	var bullets = [];
