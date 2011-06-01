@@ -171,7 +171,8 @@ function selectType(dataObject) {
 		$('#destroy_turret').show();
 		$('#turret_id_row').show();
 		selectTable[5].innerHTML = $(dataObject).attr('turret_id');
-		$('#destroy_turret').click(function(){destroyTurret(dataObject)});
+		$('#destroy_turret').attr('onclick', '').unbind('click');
+		$('#destroy_turret').click(function(){destroyTurret(dataObject);});
 	}
 
 	$('#selected_image').attr('src', 'images/select_' + $(dataObject).attr('type') + '.png');
