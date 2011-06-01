@@ -4,6 +4,10 @@
 body {
 	background-color: #000;
 }
+button {
+	border-width: 3px;
+	-webkit-border-radius: 6px; -moz-border-radius: 6px;
+}
 #header {
 	height: 100px;
 	border: solid;
@@ -29,6 +33,7 @@ body {
 #resources th, #resources td {
 	width: 200px;
 	text-align: center;
+	font-size: 2em;
 }
 
 #help {
@@ -121,6 +126,7 @@ body {
 --------------------------------------------*/
 #unpause {
 	position: fixed;
+	font-size: 1.2em;
 	left: 100px;
 	top: 100px;
 	width: 200px;
@@ -143,8 +149,15 @@ body {
 	margin-right: 5px;
 	text-align: left;
 }
-#right_pane_content button {
-	float: right;
+#left_pane_content button {
+	width: 100px;
+	height: 50px;
+	margin: 3px auto 0px 10%;
+}
+#right_pane_content {
+	width: 400px;
+	height: 400px;
+	float: left;
 	margin-left: 5px;
 }
 #send_wave {
@@ -152,8 +165,7 @@ body {
 	height: 65px;
 }
 #right_pane_content button {
-	float: left;
-	margin-left: 5px;
+	margin: 15px 0px 0px 15px;
 }
 #selected_image {
 	border: solid;
@@ -163,8 +175,6 @@ body {
 .construct_button {
 	width: 120px;
 	height: 60px;
-	border-width: 3px;
-	-webkit-border-radius: 6px; -moz-border-radius: 6px;
 }
 
 
@@ -174,21 +184,44 @@ body {
 ********************************************/
 .turret {
 	position: absolute;
-	margin-top: -100px;
-	width: 100px;
-	height: 100px;
+	margin-top: -70px;
+	width: 80px;
+	height: 80px;
 }
 .basic_paul {
 	background-image: url('images/basic_paul.png');
-	display: visible;
 }
-.undercover_paul {
+.covert_paul {
 	background-image: url('images/covert_paul.png');
-	display: visible;
 }
 .sad_paul {
 	background-image: url('images/sad_paul.png');
-	display: visible;
+}
+.gnome_paul {
+	background-image: url('images/gnome_paul.png');
+}
+.squatty_paul {
+	background-image: url('images/squatty_paul.png');
+}
+.thinky_paul {
+	background-image: url('images/thinky_paul.png');
+}
+.kissy_paul {
+	background-image: url('images/kissy_paul.png');
+}
+.boring_paul {
+	background-image: url('images/boring_paul.png');
+}
+
+.bullet {
+	position: fixed;
+	z-index: 80085;
+	border: solid;
+	border-width: 1px;
+	background-color: Gray;
+	width: 10px;
+	height: 10px;
+	-webkit-border-radius: 5px; -moz-border-radius: 5px;
 }
 /***********************************************
 *********************Enemies*****************
@@ -214,6 +247,10 @@ body {
 	background-image: url('images/isaac.png');
 	display: visible;
 }
+.dyal {
+	background-image: url('images/dyal.png');
+	display: visible;
+}
 .will {
 	background-image: url('images/will.png');
 	display: visible;
@@ -226,7 +263,7 @@ body {
 	background-color: White;
 	position: fixed;
 	z-index: 9001;
-	font-size: 2em;
+	font-size: 1.5em;
 	left: 500px;
 	top: 100px;
 	width: 700px;

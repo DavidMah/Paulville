@@ -12,10 +12,13 @@ function initializeControls() {
 	$('#help_window').hide();
 	$('.node').click(constructNode);
 	$('.turret').hide();
-	$('.construct_button').click(selectType);
+	$('.construct_button').click(function(){selectType(this)});
 	$('#send_wave').click(generateWave);
 }
 function helpWindow() {
+	if(checkPause()) {
+		return;
+	}
 	onReturn = function() {
 		$('#help_window').hide();
 		//$('#help').click(helpWindow);
@@ -36,11 +39,37 @@ function initializeGame() {
 	var nodeData = [];
 	//name, damage, dereks, sacs, bravos
 	nodeData['basic_paul'] = ['Basic Paul', 10, 30, 30, 30];
-	nodeData['sad_paul'] = ['Sad Paul', 15, 0, 70, 70];
-	nodeData['covert_paul'] = ['Undercover Paul', 19, 90, 30, 30];
+	nodeData['boring_paul'] = ['Boring Paul', 15, 100, 30, 0];
+	nodeData['squatty_paul'] = ['Squatty Paul', 19, 50, 100, 50];
+	nodeData['thinky_paul'] = ['Thinky Paul', 26, 50, 50, 200];
+	nodeData['sad_paul'] = ['Sad Paul', 35, 100, 100, 100];
+	nodeData['covert_paul'] = ['Covert Paul', 50, 200, 200, 300];
+	nodeData['gnome_paul'] = ['Gnome Paul', 65, 300, 300, 300];
+	nodeData['kissy_paul'] = ['Kissy Paul', 80, 500, 500, 500];
+
 	$(document).attr('node_data', nodeData);
+	$(document).attr('enemy_count', 0);
 	$(document).attr('enemies', []);
 	$(document).attr('level', 1);
+	$(document).attr('lifelist', ['dummy']);
+	$(document).attr('turrets', []);
+	initializeBullets();
+}
+function initializeBullets() {
+	var bullets = [];
+	var turrets = $('.turret')
+	for(var i = 0; i < 32; i++) {
+		var round = [0]
+		$(turrets[i]).attr('turret_id', i);
+		for(var j = 0; j < 4; j++) {
+			var bullet = document.createElement('div');	
+			$('#sky').append(bullet);
+			$(bullet).addClass('bullet');
+			round.push(bullet);
+		}
+		bullets.push(round);
+	}
+	$(document).attr('bullets', bullets);
 }
 /**************************************************
 *************Code for reorganizing the layout********
@@ -70,7 +99,17 @@ function adjustPanes() {
 function gameUpdate() {
 	var enemies = $(document).attr('enemies');
 	for(var i = 0; i < enemies.length; i++) {
-		move(enemies[i]);
+		var result = move(enemies[i]);
+		if(!result) {
+			$(enemies[i]).remove();
+			reward(enemies[i]);
+			enemies.splice(i, 1);
+			i--;
+		}
+	}
+	var turrets = $(document).attr('turrets');
+	for(var i = 0; i < turrets.length; i++) {
+		attack(turrets[i]);
 	}
 }
 function pauseGame(reason, onReturn) {
@@ -79,6 +118,12 @@ function pauseGame(reason, onReturn) {
 	$('#unpause')[0].innerHTML = reason + "... Press to Return to the Game";
 	$('#unpause').show();
 	$('#unpause').click(function() {returnToGame(onReturn);});
+}
+function checkPause() {
+	if($(document).attr('paused')) {
+		return true;
+	}
+	return false;
 }
 function returnToGame(onReturn) {
 	$('#unpause').hide();
@@ -97,27 +142,79 @@ function addResource(resource, n) {
 	$(document).attr(resource, n + $(document).attr(resource));
 	$('#' + resource)[0].innerHTML = $(document).attr(resource);
 }
-function selectType() {
-	$('#selected_image').attr('src', 'images/' + $(this).attr('id') + '.png');
-	var nodeData = $(document).attr('node_data')[$(this).attr('type')];
+function selectType(dataObject) {
+	if(checkPause()) {
+		return false;
+	}
+	var nodeData = [];
+	if(dataObject == null) {
+		nodeData = ['No Selection', '', '', '', ''];
+	} else {
+		nodeData = $(document).attr('node_data')[$(dataObject).attr('type')];
+	}
+
 	var selectTable = $('#left_pane_content table td')
-	selectTable[0].innerHTML = nodeData[0];
-	selectTable[1].innerHTML = nodeData[1];
-	selectTable[2].innerHTML = nodeData[2];
-	selectTable[3].innerHTML = nodeData[3];
-	selectTable[4].innerHTML = nodeData[4];
-	$(document).attr('selected', $(this).attr('type'));
+	for(var i = 0; i < 5; i++) {
+		selectTable[i].innerHTML = nodeData[i];
+	}
+
+	if(dataObject == null) { 
+		$('#selected_image').attr('src', 'images/no_paul.png');
+		$(document.attr('selected', null));
+		return;
+	}
+
+	if($(dataObject).is('.construct_button')) {
+		$('#destroy_turret').hide();
+		$('#turret_id_row').hide();
+	} else {
+		$('#destroy_turret').show();
+		$('#turret_id_row').show();
+		selectTable[5].innerHTML = $(dataObject).attr('turret_id');
+		$('#destroy_turret').click(function(){destroyTurret(dataObject)});
+	}
+
+	$('#selected_image').attr('src', 'images/select_' + $(dataObject).attr('type') + '.png');
+	$(document).attr('selected', $(dataObject).attr('type'));
 }
 function constructNode() {
+	if(checkPause()) {
+		return;
+	}
 	var selected = $(document).attr('selected');
 	if(!selected) {
+		return;
+	}
+	if($(this.children[0]).css('display') != 'none') {
 		return;
 	}
 	if(!subtractResources($(document).attr('node_data')[selected])) {
 		return;
 	}
-	$(this.children[0]).addClass(selected);
-	$(this.children[0]).show();
+	$(this).click(function(){selectType(turret);});
+
+	var turret = this.children[0];
+	$(turret).addClass(selected);
+	$(turret).show();
+	$(turret).attr('damage', $(document).attr('node_data')[selected][1]);
+	$(turret).attr('type', selected);
+	$(document).attr('turrets').push(turret);
+}
+function destroyTurret(turret) {
+	if(checkPause()) {
+		return false;
+	}
+	var turrets = $(document).attr('turrets');
+	for(var i = 0; i < turrets.length; i++) {
+		if(turrets[i] == turret) {
+			turrets.splice(i, 1);
+			$(turret).hide();
+			$(turret).removeClass($(turret).attr('type'));
+			selectType(null);
+			return true;
+		}
+	}
+	return false;
 }
 function subtractResources(necessary) {
 	var dereks = necessary[2];
@@ -131,34 +228,51 @@ function subtractResources(necessary) {
 	addResource('bravos', -bravos);
 	return true;
 }
+function reward(target) {
+	var funds = parseInt($(target).attr('worth'));
+	addResource('dereks', funds);
+	addResource('sacs', funds);
+	addResource('bravos', funds);
+}
 
 /*********************************************
 ******************Combat*********************
 *******************************************/
 function generateWave() {
-	var difficulty = $(document).attr('level') * 10
+	if(checkPause()) {
+		return;
+	}
+	var difficulty = $(document).attr('level');
+	difficulty = parseInt((Math.pow(difficulty * 0.7, 2) + 5 * difficulty) / 2);
 	var enemies = DIFFICULTIES.map(function(x){return x;});
 	while(difficulty > 0 && enemies.length > 0) {
 		var choice = parseInt(Math.random() * enemies.length);	
 		if(enemies[choice][1] > difficulty) {
 			enemies.splice(choice, 1);
 		} else {
-			generateEnemy(enemies[choice][0]);
+			generateEnemy(enemies[choice]);
 			difficulty -= enemies[choice][1];
 		}
 	}
+	$('#wave_no')[0].innerHTML = $(document).attr('level');
 	$(document).attr('level', $(document).attr('level') + 1);
 }
-function generateEnemy(enemyName) {
+function generateEnemy(enemyData) {
 	enemy = document.createElement('div');
 	$(enemy).attr('x', parseInt(Math.random() * 200) + 2000);
+	$(enemy).attr('y', parseInt(Math.random() * 100));
 	$(enemy).css('left', $(enemy).attr('x') + 'px');
-	$(enemy).css('top', parseInt(Math.random() * 100) + 'px');
-	$(enemy).attr('xVelocity', -13);
-	$(enemy).addClass(enemyName);
+	$(enemy).css('top', $(enemy).attr('y') + 'px');
+	$(enemy).attr('xVelocity', parseInt(-enemyData[3]));
+	$(enemy).attr('count', $(document).attr('enemy_count'));
+	$(enemy).attr('health', enemyData[2]);
+	$(enemy).attr('worth', enemyData[1]);
+	$(document).attr('lifelist')[$(document).attr('enemy_count')] = enemy;
+	$(enemy).addClass(enemyData[0]);
 	$(enemy).addClass('enemy');
 	$('#sky').append(enemy);
 	$(document).attr('enemies').push(enemy);
+	$(document).attr("enemy_count", $(document).attr('enemy_count') + 1);
 }
 function move(enemy) {
 	var x = parseInt($(enemy).attr('x'));
@@ -166,19 +280,87 @@ function move(enemy) {
 	x += xVelocity;
 	$(enemy).attr('x', x);
 	$(enemy).css('left', x + "px");
-};
+	if(enemy.offsetLeft < -500 || parseFloat($(enemy).attr('health')) < 0) {
+		$(document).attr('lifelist')[$(enemy).attr('count')] = null;
+		return false;
+	}
+	return true;
+}
+function attack(turret) {
+	if($(document).attr('enemies').length == 0) {
+		return false;
+	}
+	var enemy = $(turret).attr('target');
+	if(!enemy || !inRange(turret, enemy) || !$(document).attr('lifelist')[$(enemy).attr('count')]) {
+		var enemies = $(document).attr('enemies');
+		for(var i = 0; i < enemies.length; i++) {
+			if(inRange(turret, enemies[i])) {
+				$(turret).attr('target', $(enemies[i]).attr('count'));
+			}
+		}
+	}
+	enemy = $(document).attr('lifelist')[$(turret).attr('target')];
+	if(!enemy || !inRange(turret, enemy)) {
+		return false;
+	}
+	sendProjectile(turret, enemy);
+}
+function inRange(turret, other) {
+	var yDistance = 100 - parseInt($(other).attr('y'));
+	var xDistance = turret.offsetLeft - other.offsetLeft;
+	var distance = Math.sqrt(yDistance * yDistance + xDistance * xDistance);
+	return distance <= 400;
+}
+function sendProjectile(turret, other) {
+	var round = $(document).attr('bullets')[parseInt($(turret).attr('turret_id'))];
+	var bullet = round[round[0]];
+	round[0] = (round[0] + 1) % 4;
+
+	var turretOffset = $(turret).offset();
+	var otherOffset = $(other).offset();
+	$(bullet).show();
+
+	var yDistance = otherOffset['top'] - turretOffset['top'];
+	var xDistance = otherOffset['left'] - (turretOffset['left'] - (4 * parseInt($(other).attr('xVelocity'))));
+	$(bullet).attr('x', turretOffset['left'] + parseInt((parseInt($(turret).css('width')) / 2)));
+	$(bullet).attr('y', turretOffset['top'] + parseInt((parseInt($(turret).css('height')) / 2)));
+	$(bullet).css('left', parseInt($(bullet).attr('x')) + 'px');
+	$(bullet).css('top', parseInt($(bullet).attr('y')) + 'px');
+	var xVelocity = parseInt(xDistance / 4);
+	var yVelocity = parseInt(yDistance / 4);
+	setTimeout(function() {moveProjectile(bullet, xVelocity, yVelocity, 3, turret, other)}, 10);
+}
+function moveProjectile(bullet, xVelocity, yVelocity, depth, turret, other) {
+	if(depth == 0) {
+		$(bullet).hide();
+		damage(turret, other);
+		return;
+	}
+	$(bullet).attr('x', parseInt($(bullet).attr('x')) + xVelocity);
+	$(bullet).attr('y', parseInt($(bullet).attr('y')) + yVelocity);
+	$(bullet).css('left', parseInt($(bullet).attr('x')) + 'px');
+	$(bullet).css('top', parseInt($(bullet).attr('y')) + 'px');
+	setTimeout(function() {moveProjectile(bullet, xVelocity, yVelocity, depth - 1, turret, other)}, 10);
+	
+}
+function damage(turret, other) {
+	var damage = .25 * parseInt($(turret).attr('damage'));
+	var enemyHealth = parseFloat($(other).attr('health')) - damage;
+	$(other).attr('health', enemyHealth);
+}
 
 /**********************************************
 *********************Crap**********************
 *********************************************/
 var DIFFICULTIES = 
-('sac 25\n' +
-'dyal 19\n' +
-'derek 12\n' +
-'mah 7\n' +
-'bravo 3' +
+('isaac 45 1500 8\n' +
+'dyal 30 450 16\n' +
+'will 22 310 13\n' +
+'derek 14 200 14\n' +
+'mah 7 160 15\n' +
+'bravo 1 1 18' +
 '').split("\n").map(
 	function(x){
 		var temp =  x.split(" ")
-		return [temp[0], parseInt(temp[1])];
+		return [temp[0], parseInt(temp[1]), parseInt(temp[2]), parseInt(temp[3])];
 	});

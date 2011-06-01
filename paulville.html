@@ -11,8 +11,8 @@
 	 	<div id="header">
 			<div id="resource_container">
 				<table id="resources">
-					<tr><th>Dereks</th><th>Sacs</th><th>Bravos</th></tr>
-					<tr><td id="dereks">0</td><td id="sacs">0</td><td id="bravos">0</td></tr>
+					<tr><th>Dereks</th><th>Sacs</th><th>Bravos</th><th>Wave</th></tr>
+					<tr><td id="dereks">0</td><td id="sacs">0</td><td id="bravos"></td><td id="wave_no">0</td></tr>
 				<button id="help">Help</button>
 				</table>
 			</div>
@@ -29,8 +29,13 @@
 		<div id="footer">
 			<div id="controls">
 				<button id="select_basic_paul" class="construct_button" type="basic_paul">Basic Paul</button>
+				<button id="select_boring_paul" class="construct_button" type="boring_paul">Boring Paul</button>
+				<button id="select_squatty_paul" class="construct_button" type="squatty_paul">Squatty Paul</button>
+				<button id="select_thinky_paul" class="construct_button" type="thinky_paul">Thinky Paul</button>
 				<button id="select_sad_paul" class="construct_button" type="sad_paul">Sad Paul</button>
 				<button id="select_covert_paul" class="construct_button" type="covert_paul">Covert Paul</button>
+				<button id="select_gnome_paul" class="construct_button" type="gnome_paul">Gnome Paul</button>
+				<button id="select_kissy_paul" class="construct_button" type="kissy_paul">Kissy Paul</button>
 			</div>
 			<div id="left_pane">
 				<div id="left_pane_content">
@@ -41,7 +46,9 @@
 						<tr><th>Dereks:</th><td></td></tr>
 						<tr><th>Sacs:</th><td></td></tr>
 						<tr><th>Bravos:</th><td></td></tr>
+						<tr id="turret_id_row"><th>Id:</th><td></td></tr>
 					</table>
+					<button id="destroy_turret">Destroy Turret</button>
 				</div>
 			</div>
 			<div id="middle_bar"></div>
@@ -54,12 +61,14 @@
 		<button id="unpause">Return to the Game</button>
 		<div id="help_window">
 			<h2> Help Window </h2>
-			<p>The goal of this game is to defend your paulville from annoying d-bags every round by building paul turrets.</p>
+			<p>The goal of this game is to defend your paulville from annoying 'friends' every round by building paul turrets.</p>
 			<p>The top of the screen are your resources -- you need these to build pauls.</p>
 			<p>At the bottom are options for what pauls you can build. Clicking one of these buttons will
 				show you(in the bottom left) the name of the paul, the damage, and the resource needs.<p>
 			<p>With a paul choice selected, you can click on a block on the field to build that paul. 
 				This will consume resources.<p>
+			<p>Pauls will try to target the first enemy that comes within its range, so it may be wise to spread out pauls so that they target different enemies.</p>
+			<p>A Paul's range only depends on horizontal distance, Pauls on lower parts of the grid do not have a disadvantage.</p>
 		</div>
 		</body> 
 	</html> 
