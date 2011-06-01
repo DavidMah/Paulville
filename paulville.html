@@ -13,6 +13,7 @@
 				<table id="resources">
 					<tr><th>Dereks</th><th>Sacs</th><th>Bravos</th></tr>
 					<tr><td id="dereks">0</td><td id="sacs">0</td><td id="bravos">0</td></tr>
+				<button id="help">Help</button>
 				</table>
 			</div>
 		</div>
@@ -28,10 +29,12 @@
 		<div id="footer">
 			<div id="controls">
 				<button id="select_basic_paul" class="construct_button" type="basic_paul">Basic Paul</button>
+				<button id="select_sad_paul" class="construct_button" type="sad_paul">Sad Paul</button>
+				<button id="select_undercover_paul" class="construct_button" type="undercover_paul">Undercover Paul</button>
 			</div>
 			<div id="left_pane">
 				<div id="left_pane_content">
-					<img src="#" id="selected_image" alt="selected constructor"/ width="150" height="150">
+					<img src="images/no_paul.png" id="selected_image" alt="selected constructor"/ width="150" height="150">
 					<table>
 						<tr><th>Name:</th><td>No Selection</td></tr>
 						<tr><th>Damage:</th><td></td></tr>
@@ -45,6 +48,15 @@
 			<div id="right_pane"></div>
 		</div>
 		<button id="unpause">Return to the Game</button>
+		<div id="help_window">
+			<h2> Help Window </h2>
+			<p>The goal of this game is to defend your paulville from annoying d-bags every round by building paul turrets.</p>
+			<p>The top of the screen are your resources -- you need these to build pauls.</p>
+			<p>At the bottom are options for what pauls you can build. Clicking one of these buttons will
+				show you(in the bottom left) the name of the paul, the damage, and the resource needs.<p>
+			<p>With a paul choice selected, you can click on a block on the field to build that paul. 
+				This will consume resources.<p>
+		</div>
 		</body> 
 	</html> 
 

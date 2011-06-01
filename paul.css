@@ -20,15 +20,22 @@ body {
 	margin: 5px auto 5px auto;
 }
 #resources {
-	width: 800px;
-	margin 0px 0px 0px 0px;
+	width: 600px;
+	margin 0px auto 0px 0px;
 	height: 80px;
 	border-collapse: collapse;
 }
 
 #resources th, #resources td {
-	width: 250px;
+	width: 200px;
 	text-align: center;
+}
+
+#help {
+	float: right;
+	margin: 5px 5px 0px 0px;
+	width: 150px;
+	height: 70px;
 }
 #sky {
 	background-color: #9dd4ff;
@@ -142,15 +149,17 @@ body {
 }
 
 .construct_button {
-	width: 80px;
-	height: 80px;
+	width: 120px;
+	height: 60px;
+	border-width: 3px;
+	-webkit-border-radius: 6px; -moz-border-radius: 6px;
 }
 
 
 
-/*-------------------------------------------
-----------------Turret Types---------------
---------------------------------------------*/
+/*******************************************
+****************Turret Types****************
+********************************************/
 .turret {
 	position: absolute;
 	margin-top: -100px;
@@ -160,4 +169,41 @@ body {
 .basic_paul {
 	background-image: url('images/basic_paul.png');
 	display: visible;
+}
+.undercover_paul {
+	background-image: url('images/undercover_paul.png');
+	display: visible;
+}
+.sad_paul {
+	background-image: url('images/sad_paul.png');
+	display: visible;
+}
+/***********************************************
+*********************Enemies*****************
+*******************************************/
+.enemy {
+	width: 100px;
+	height: 100px;
+	position: absolute;
+}
+.mah {
+	background-image: url('images/mah.png');
+	display: visible;
+}
+/******************************************
+****************Miscellaneous**************
+*******************************************/
+#help_window {
+	border: solid;
+	background-color: White;
+	position: fixed;
+	z-index: 9001;
+	font-size: 2em;
+	left: 500px;
+	top: 100px;
+	width: 700px;
+	height: 700px;
+}
+#help_window h2 {
+	text-align: center;
 }
