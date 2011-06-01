@@ -5,60 +5,56 @@ $(document).ready(function() {
 
 });
 
-
+/*************************************************
+*************Initializing Game Features*********
+************************************************/
 
 function initializeControls() {
 	$('#help').click(helpWindow);
 	$('#help_window').hide();
-	$('.node').click(constructNode);
+	$('.node').click(constructTurret);
 	$('.turret').hide();
 	$('.construct_button').click(function(){selectType(this)});
 	$('#send_wave').click(generateWave);
 }
-function helpWindow() {
-	if(checkPause()) {
-		return;
-	}
-	onReturn = function() {
-		$('#help_window').hide();
-		//$('#help').click(helpWindow);
-	};
-	pauseGame('You have opened the help window', onReturn);
-	//$('#help').click(function() {returnToGame(onReturn);});
-	$('#help_window').show();
-}
-
 function initializeGame() {
+	//Initial Resources
 	setResource('dereks', 100);
 	setResource('sacs', 100);
 	setResource('bravos', 100);
+	//Recurring gamewide timer for movement
 	$(document).everyTime(50, 'update', gameUpdate, 0);
 	$(document).attr('paused', false);
 	$(document).attr('selected', null);
 
-	var nodeData = [];
 	//name, damage, dereks, sacs, bravos
-	nodeData['basic_paul'] = ['Basic Paul', 10, 30, 30, 30];
-	nodeData['boring_paul'] = ['Boring Paul', 15, 100, 30, 0];
-	nodeData['squatty_paul'] = ['Squatty Paul', 19, 50, 100, 50];
-	nodeData['thinky_paul'] = ['Thinky Paul', 26, 50, 50, 200];
-	nodeData['sad_paul'] = ['Sad Paul', 35, 100, 100, 100];
-	nodeData['covert_paul'] = ['Covert Paul', 50, 200, 200, 300];
-	nodeData['gnome_paul'] = ['Gnome Paul', 65, 300, 300, 300];
-	nodeData['kissy_paul'] = ['Kissy Paul', 80, 500, 500, 500];
-	nodeData['chipmunk_paul'] = ['Chipmunk Paul', 169, 1200, 1200, 1200];
+	var nodeData = [];
+	for(var i = 0; i < TURRETDATA.length; i++) {
+		var type = TURRETDATA[i][0];
+		var name = TURRETDATA[i][1] + " " + TURRETDATA[i][2];
+		nodeData[type] = [];
+		nodeData[type].push(name);
+		for(var j = 3; j <= 6; j++) {
+			nodeData[type].push(TURRETDATA[i][j]);
+		}
+	}
 
 	$(document).attr('node_data', nodeData);
+
+	//Set of enemy indexes to whether or not they are alive.
 	$(document).attr('enemy_count', 0);
+	$(document).attr('lifelist', ['dummy']);
+
 	$(document).attr('enemies', []);
+	$(document).attr('turrets', []);
+
 	$(document).attr('lives', 20);
 	$(document).attr('level', 1);
-	$(document).attr('lifelist', ['dummy']);
-	$(document).attr('turrets', []);
 	initializeBullets();
 
 	helpWindow();
 }
+//Creates 32*4 precreated bullets for turrets to cycle through.
 function initializeBullets() {
 	var bullets = [];
 	var turrets = $('.turret')
@@ -83,7 +79,7 @@ function adjustPanes() {
 	if(!$(document).attr('paused') && (window.innerHeight < 800 || window.innerWidth < 1050))
 		pauseGame('Window too Small. Please Resize. You might even consider holding CTRL and scrolling the mousewheel down', function(){return true;});
 	if($('#footer').css('top') != (window.innerHeight - 300) + 'px') {
-		$('#footer').css('top', (window.innerHeight - 300) + 'px');
+		$('#footer').css('top', (window.innerHeight - 250) + 'px');
 		$('#sky').css('height', (window.innerHeight - 600) + 'px');
 		$('#stage').css('top', (window.innerHeight - 500) + 'px');
 	}
@@ -116,25 +112,6 @@ function gameUpdate() {
 	for(var i = 0; i < turrets.length; i++) {
 		attack(turrets[i]);
 	}
-}
-function pauseGame(reason, onReturn) {
-	$(document).stopTime('update');
-	$(document).attr('paused', true);
-	$('#unpause')[0].innerHTML = reason + "... Press to Return to the Game";
-	$('#unpause').show();
-	$('#unpause').click(function() {returnToGame(onReturn);});
-}
-function checkPause() {
-	if($(document).attr('paused')) {
-		return true;
-	}
-	return false;
-}
-function returnToGame(onReturn) {
-	$('#unpause').hide();
-	onReturn();
-	$(document).everyTime(50, 'update', gameUpdate, 0);
-	$(document).attr('paused', false);
 }
 function hasResource(resource, n) {
 	return $(document).attr(resource) >= n;
@@ -183,7 +160,7 @@ function selectType(dataObject) {
 	$('#selected_image').attr('src', 'images/select_' + $(dataObject).attr('type') + '.png');
 	$(document).attr('selected', $(dataObject).attr('type'));
 }
-function constructNode() {
+function constructTurret() {
 	if(checkPause()) {
 		return;
 	}
@@ -251,6 +228,10 @@ function reduceLife() {
 /*********************************************
 ******************Combat*********************
 *******************************************/
+
+/******************
+******Enemy*******
+****************/
 function generateWave() {
 	if(checkPause()) {
 		return;
@@ -271,6 +252,9 @@ function generateWave() {
 	$(document).attr('level', $(document).attr('level') + 1);
 }
 function generateEnemy(enemyData) {
+	if(checkPause()) {
+		return;
+	}
 	var enemy = document.createElement('div');
 	$(enemy).attr('x', parseInt(Math.random() * 200) + 2000);
 	$(enemy).attr('y', parseInt(Math.random() * 100));
@@ -302,8 +286,10 @@ function move(enemy) {
 	var x = parseInt($(enemy).attr('x'));
 	var xVelocity = parseInt($(enemy).attr('xVelocity'));
 	x += xVelocity;
+
 	$(enemy).attr('x', x);
 	$(enemy).css('left', x + "px");
+
 	if(enemy.offsetLeft < -100 || parseFloat($(enemy).attr('health')) < 0) {
 		$(document).attr('lifelist')[$(enemy).attr('count')] = null;
 		if(enemy.offsetLeft < -100) {
@@ -315,10 +301,16 @@ function move(enemy) {
 	}
 	return true;
 }
+
 function updateHealthBar(enemy) {
 	var health = enemy.children[0].children[0];
 	$(health).css('width', 80 * parseInt($(enemy).attr('health')) / parseInt($(enemy).attr('original-health')) + 'px');
 }
+
+/****************
+*****Turrets*****
+****************/
+
 function attack(turret) {
 	if($(document).attr('enemies').length == 0) {
 		return false;
@@ -338,12 +330,14 @@ function attack(turret) {
 	}
 	sendProjectile(turret, enemy);
 }
+
 function inRange(turret, other) {
 	var yDistance = 100 - parseInt($(other).attr('y'));
 	var xDistance = turret.offsetLeft - other.offsetLeft;
 	var distance = Math.sqrt(yDistance * yDistance + xDistance * xDistance);
 	return distance <= 400;
 }
+
 function sendProjectile(turret, other) {
 	var round = $(document).attr('bullets')[parseInt($(turret).attr('turret_id'))];
 	var bullet = round[round[0]];
@@ -363,6 +357,7 @@ function sendProjectile(turret, other) {
 	var yVelocity = parseInt(yDistance / 4);
 	setTimeout(function() {moveProjectile(bullet, xVelocity, yVelocity, 3, turret, other)}, 10);
 }
+
 function moveProjectile(bullet, xVelocity, yVelocity, depth, turret, other) {
 	if(depth == 0) {
 		$(bullet).hide();
@@ -376,24 +371,73 @@ function moveProjectile(bullet, xVelocity, yVelocity, depth, turret, other) {
 	setTimeout(function() {moveProjectile(bullet, xVelocity, yVelocity, depth - 1, turret, other)}, 10);
 	
 }
+
 function damage(turret, other) {
 	var damage = .25 * parseInt($(turret).attr('damage'));
 	var enemyHealth = parseFloat($(other).attr('health')) - damage;
 	$(other).attr('health', enemyHealth);
 }
+/***********************************************
+***********************Misc*******************
+********************************************/
+function pauseGame(reason, onReturn) {
+	$(document).stopTime('update');
+	$(document).attr('paused', true);
+	$('#unpause')[0].innerHTML = reason + "... Press to Return to the Game";
+	$('#unpause').show();
+	$('#unpause').click(function() {returnToGame(onReturn);});
+}
+
+function returnToGame(onReturn) {
+	$('#unpause').hide();
+	onReturn();
+	$(document).everyTime(50, 'update', gameUpdate, 0);
+	$(document).attr('paused', false);
+}
+
+function checkPause() {
+	if($(document).attr('paused')) {
+		return true;
+	}
+	return false;
+}
+
+function helpWindow() {
+	if(checkPause()) {
+		return;
+	}
+	onReturn = function() {
+		$('#help_window').hide();
+		//$('#help').click(helpWindow);
+	};
+	pauseGame('You have opened the help window', onReturn);
+	//$('#help').click(function() {returnToGame(onReturn);});
+	$('#help_window').show();
+}
+
 
 /**********************************************
-*********************Crap**********************
+*********************Constants**********************
 *********************************************/
 var DIFFICULTIES = 
-('isaac 45 2500 8\n' +
-'dyal 30 700 16\n' +
-'will 22 450 13\n' +
-'derek 14 280 14\n' +
-'mah 7 200 15\n' +
-'bravo 1 30 18' +
-'').split("\n").map(
-	function(x){
-		var temp =  x.split(" ")
-		return [temp[0], parseInt(temp[1]), parseInt(temp[2]), parseInt(temp[3])];
-	});
+	('isaac 45 2500 8\n' +
+	'dyal 30 700 16\n' +
+	'will 22 450 13\n' +
+	'derek 14 280 14\n' +
+	'mah 7 200 15\n' +
+	'bravo 1 30 18' +
+	'').split("\n").map(
+		function(x){
+			var temp =  x.split(" ")
+			return [temp[0], parseInt(temp[1]), parseInt(temp[2]), parseInt(temp[3])];
+		});
+var TURRETDATA = 
+	('basic_paul Basic Paul 10 30 30 30\n' +
+	'boring_paul Boring Paul 15 100 30 0\n' +
+	'squatty_paul Squatty Paul 19 50 100 50\n' +
+	'thinky_paul Thinky Paul 26 50 50 200\n' +
+	'sad_paul Sad Paul 35 100 100 100\n' +
+	'covert_paul Covert Paul 50 200 200 300\n' +
+	'gnome_paul Gnome Paul 65 300 300 300\n' +
+	'kissy_paul Kissy Paul 80 500 500 500'
+	'chipmunk_paul Chipmunk Paul 169 1200 1200 1200').split("\n").map(function(x){return x.split(" ")});
