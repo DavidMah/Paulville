@@ -354,12 +354,12 @@ function damage(turret, other) {
 *********************Crap**********************
 *********************************************/
 var DIFFICULTIES = 
-('isaac 45 1500 8\n' +
-'dyal 30 450 16\n' +
-'will 22 310 13\n' +
-'derek 14 200 14\n' +
-'mah 7 160 15\n' +
-'bravo 1 1 18' +
+('isaac 45 3000 8\n' +
+'dyal 30 800 16\n' +
+'will 22 510 13\n' +
+'derek 14 300 14\n' +
+'mah 7 240 15\n' +
+'bravo 1 30 18' +
 '').split("\n").map(
 	function(x){
 		var temp =  x.split(" ")
