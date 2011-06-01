@@ -439,5 +439,5 @@ var TURRETDATA =
 	'sad_paul Sad Paul 35 100 100 100\n' +
 	'covert_paul Covert Paul 50 200 200 300\n' +
 	'gnome_paul Gnome Paul 65 300 300 300\n' +
-	'kissy_paul Kissy Paul 80 500 500 500'
+	'kissy_paul Kissy Paul 80 500 500 500\n' +
 	'chipmunk_paul Chipmunk Paul 169 1200 1200 1200').split("\n").map(function(x){return x.split(" ")});
