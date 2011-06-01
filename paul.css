@@ -212,6 +212,9 @@ button {
 .boring_paul {
 	background-image: url('images/boring_paul.png');
 }
+.chipmunk_paul {
+	background-image: url('images/chipmunk_paul.png');
+}
 
 .bullet {
 	position: fixed;

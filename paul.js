@@ -46,6 +46,7 @@ function initializeGame() {
 	nodeData['covert_paul'] = ['Covert Paul', 50, 200, 200, 300];
 	nodeData['gnome_paul'] = ['Gnome Paul', 65, 300, 300, 300];
 	nodeData['kissy_paul'] = ['Kissy Paul', 80, 500, 500, 500];
+	nodeData['chipmunk_paul'] = ['Chipmunk Paul', 169, 1200, 1200, 1200];
 
 	$(document).attr('node_data', nodeData);
 	$(document).attr('enemy_count', 0);
