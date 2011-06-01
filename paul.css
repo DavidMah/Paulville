@@ -255,6 +255,19 @@ button {
 	background-image: url('images/will.png');
 	display: visible;
 }
+.health_container {
+	position: absolute;
+	top: 100px;
+	width: 80px;
+	height: 10px;
+	background-color: Red;
+}
+.health_bar {
+	float: left;
+	width: 80px;
+	height: 10px;
+	background-color: Green;
+}
 /******************************************
 ****************Miscellaneous**************
 *******************************************/

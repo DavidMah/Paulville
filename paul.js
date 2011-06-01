@@ -50,6 +50,7 @@ function initializeGame() {
 	$(document).attr('node_data', nodeData);
 	$(document).attr('enemy_count', 0);
 	$(document).attr('enemies', []);
+	$(document).attr('lives', 20);
 	$(document).attr('level', 1);
 	$(document).attr('lifelist', ['dummy']);
 	$(document).attr('turrets', []);
@@ -65,6 +66,7 @@ function initializeBullets() {
 			var bullet = document.createElement('div');	
 			$('#sky').append(bullet);
 			$(bullet).addClass('bullet');
+			$(bullet).hide();
 			round.push(bullet);
 		}
 		bullets.push(round);
@@ -100,9 +102,9 @@ function gameUpdate() {
 	var enemies = $(document).attr('enemies');
 	for(var i = 0; i < enemies.length; i++) {
 		var result = move(enemies[i]);
+		updateHealthBar(enemies[i]);
 		if(!result) {
 			$(enemies[i]).remove();
-			reward(enemies[i]);
 			enemies.splice(i, 1);
 			i--;
 		}
@@ -235,6 +237,13 @@ function reward(target) {
 	addResource('sacs', funds);
 	addResource('bravos', funds);
 }
+function reduceLife() {
+	$(document).attr('lives', $(document).attr('lives') - 1);
+	$('#lives')[0].innerHTML = $(document).attr('lives');
+	if($(document).attr('lives') == 0) {
+		pauseGame('You just lost. You can keep playing though...', function(){});
+	}
+}
 
 /*********************************************
 ******************Combat*********************
@@ -244,7 +253,7 @@ function generateWave() {
 		return;
 	}
 	var difficulty = $(document).attr('level');
-	difficulty = parseInt((Math.pow(difficulty * 0.7, 2) + 5 * difficulty) / 2);
+	difficulty = parseInt((Math.pow(difficulty * 0.9, 2) + 5 * difficulty) / 2);
 	var enemies = DIFFICULTIES.map(function(x){return x;});
 	while(difficulty > 0 && enemies.length > 0) {
 		var choice = parseInt(Math.random() * enemies.length);	
@@ -259,15 +268,26 @@ function generateWave() {
 	$(document).attr('level', $(document).attr('level') + 1);
 }
 function generateEnemy(enemyData) {
-	enemy = document.createElement('div');
+	var enemy = document.createElement('div');
 	$(enemy).attr('x', parseInt(Math.random() * 200) + 2000);
 	$(enemy).attr('y', parseInt(Math.random() * 100));
 	$(enemy).css('left', $(enemy).attr('x') + 'px');
 	$(enemy).css('top', $(enemy).attr('y') + 'px');
 	$(enemy).attr('xVelocity', parseInt(-enemyData[3]));
+
 	$(enemy).attr('count', $(document).attr('enemy_count'));
+	$(enemy).attr('original-health', enemyData[2]);
 	$(enemy).attr('health', enemyData[2]);
 	$(enemy).attr('worth', enemyData[1]);
+
+	var healthBar = document.createElement('div');
+	$(healthBar).addClass('health_container');
+	$(enemy).append(healthBar);
+
+	var health = document.createElement('div');
+	$(health).addClass('health_bar');
+	$(healthBar).append(health);
+
 	$(document).attr('lifelist')[$(document).attr('enemy_count')] = enemy;
 	$(enemy).addClass(enemyData[0]);
 	$(enemy).addClass('enemy');
@@ -281,11 +301,20 @@ function move(enemy) {
 	x += xVelocity;
 	$(enemy).attr('x', x);
 	$(enemy).css('left', x + "px");
-	if(enemy.offsetLeft < -500 || parseFloat($(enemy).attr('health')) < 0) {
+	if(enemy.offsetLeft < -100 || parseFloat($(enemy).attr('health')) < 0) {
 		$(document).attr('lifelist')[$(enemy).attr('count')] = null;
+		if(enemy.offsetLeft < -100) {
+			reduceLife();
+		} else {
+			reward(enemy);
+		}
 		return false;
 	}
 	return true;
+}
+function updateHealthBar(enemy) {
+	var health = enemy.children[0].children[0];
+	$(health).css('width', 80 * parseInt($(enemy).attr('health')) / parseInt($(enemy).attr('original-health')) + 'px');
 }
 function attack(turret) {
 	if($(document).attr('enemies').length == 0) {
@@ -354,11 +383,11 @@ function damage(turret, other) {
 *********************Crap**********************
 *********************************************/
 var DIFFICULTIES = 
-('isaac 45 3000 8\n' +
-'dyal 30 800 16\n' +
-'will 22 510 13\n' +
-'derek 14 300 14\n' +
-'mah 7 240 15\n' +
+('isaac 45 2500 8\n' +
+'dyal 30 700 16\n' +
+'will 22 450 13\n' +
+'derek 14 280 14\n' +
+'mah 7 200 15\n' +
 'bravo 1 30 18' +
 '').split("\n").map(
 	function(x){
