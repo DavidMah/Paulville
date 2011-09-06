@@ -459,4 +459,4 @@ var IMAGEDATA =
   'select_chipmunk_paul.png select_covert_paul.png select_gnome_paul.png ' +
   'select_kissy_paul.png select_sad_paul.png select_squatty_paul.png ' +
   'select_thinky_paul.png select_undercover_paul.png squatty_paul.png ' +
-  'thinky_paul.png undercover_paul.png will.png ').split(/ +/).map(function(x){ return "/images/" + x; });
+  'thinky_paul.png undercover_paul.png will.png ').split(/ +/).map(function(x){ return "/paulville/images/" + x; });
