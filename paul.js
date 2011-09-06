@@ -57,8 +57,10 @@ function initializeGame() {
 }
 
 function preloadImages() {
+  images = []
   for(var i = 0; i < IMAGEDATA.length; i++) {
-    document.createElement('img').src = (IMAGEDATA[i]);
+    images[i] = new Image()
+    images[i].src = IMAGEDATA[i]
   }
 }
 
@@ -457,4 +459,4 @@ var IMAGEDATA =
   'select_chipmunk_paul.png select_covert_paul.png select_gnome_paul.png ' +
   'select_kissy_paul.png select_sad_paul.png select_squatty_paul.png ' +
   'select_thinky_paul.png select_undercover_paul.png squatty_paul.png ' +
-  'thinky_paul.png undercover_paul.png will.png ').split(/ +/).map(function(x){ return "davidpmah.com/paulville/images/" + x; });
+  'thinky_paul.png undercover_paul.png will.png ').split(/ +/).map(function(x){ return "/images/" + x; });
